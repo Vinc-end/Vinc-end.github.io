@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vincent Czechowski - Programist</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="cursor-glow" id="glow"></div>
+
+<nav id="nav">
+  <span class="nav-logo">Vincent Czechowski</span>
+  <ul class="nav-links">
+    <li><a href="#o-mnie">o mnie</a></li>
+    <li><a href="#projekty">projekty</a></li>
+    <li><a href="#kontakt">kontakt</a></li>
+  </ul>
+</nav>
+
+<main>
+  <div class="hero">
+    <p class="hero-eyebrow">Full-Stack Developer</p>
+    <h1 class="hero-title">Buduję rzeczy,<br><em>które działają.</em></h1>
+    <div class="hero-side">
+        <button class="btn btn-fill" id="hero-side-btn">Kliknij for fun</button>
+    </div>
+ <div class="tree">
+  <ul>
+    <li>
+      <span class="node">Hover me</span>
+      <ul>
+        <li><span class="node">Child 1</span></li>
+        <li><span class="node">Child 2</span></li>
+      </ul>
+    </li>
+    <li>
+      <span class="node">Hover me</span>
+      <ul>
+        <li><span class="node">Child 3</span></li>
+        <li><span class="node">Child 4</span></li>
+      </ul>
+    </li>
+
+      
+  </ul>
+ </div>
+
+    <p class="hero-desc">Tworzę szybkie, skalowalne aplikacje webowe — od architektury backendu po dopracowany interfejs użytkownika.</p>
+    <div class="hero-btns">
+      <a href="#projekty" class="btn btn-fill">Moje projekty ↓</a>
+      <a href="#kontakt" class="btn btn-outline">Skontaktuj się</a>
+    </div>
+    <div class="scroll-hint">
+      <div class="scroll-line"></div>
+      SCROLL
+    </div>
+  </div>
+
+  <section id="o-mnie">
+    <div class="section-header">
+      <span class="section-tag">Technologie</span>
+      <div class="section-line"></div>
+    </div>
+    <div class="skills-grid" id="skills">
+      <div class="skill-item">Python</div>
+      <div class="skill-item">TypeScript</div>
+      <div class="skill-item">React</div>
+      <div class="skill-item">Web Development</div>
+      <div class="skill-item">PostgreSQL</div>
+      <div class="skill-item">Php</div>
+      <div class="skill-item">FastAPI</div>
+      <div class="skill-item">AI</div>
+      <div class="skill-item">Redis</div>
+      <div class="skill-item">Git</div>
+      <div class="skill-item">Git</div>
+      <div class="skill-item">Git</div>
+    </div>
+  </section>
+
+  <section id="projekty">
+    <div class="section-header">
+      <span class="section-tag">Projekty</span>
+      <div class="section-line"></div>
+    </div>
+    <div class="projects-list">
+      <div class="project-item">
+        <div>
+          <p class="project-num">01</p>
+          <p class="project-name">KPN — gra karciana</p>
+          <p class="project-desc">Turowa gra 1v1 oparta na kamieniu-papierze-nożycach z systemem animacji kart, efektami walki i ekranem wyników.</p>
+          <div class="project-tags">
+            <span class="tag">Python</span>
+            <span class="tag">Game Dev</span>
+            <span class="tag">Animations</span>
+          </div>
+        </div>
+        <span class="project-arrow">↗</span>
+      </div>
+      <div class="project-item">
+        <div>
+          <p class="project-num">02</p>
+          <p class="project-name">Dashboard analityczny</p>
+          <p class="project-desc">Aplikacja do wizualizacji danych w czasie rzeczywistym z filtrowaniem, eksportem raportów i widokami mobilnymi.</p>
+          <div class="project-tags">
+            <span class="tag">React</span>
+            <span class="tag">Node.js</span>
+            <span class="tag">PostgreSQL</span>
+          </div>
+        </div>
+        <span class="project-arrow">↗</span>
+      </div>
+      <div class="project-item">
+        <div>
+          <p class="project-num">03</p>
+          <p class="project-name">API autoryzacji</p>
+          <p class="project-desc">Mikroserwis uwierzytelniania z JWT, OAuth2 i rate limitingiem — gotowy do wdrożenia w środowisku produkcyjnym.</p>
+          <div class="project-tags">
+            <span class="tag">FastAPI</span>
+            <span class="tag">Docker</span>
+            <span class="tag">Redis</span>
+          </div>
+        </div>
+        <span class="project-arrow">↗</span>
+      </div>
+    </div>
+  </section>
+
+  <section id="kontakt">
+    <div class="section-header">
+      <span class="section-tag">Kontakt</span>
+      <div class="section-line"></div>
+    </div>
+    <div class="contact-block" id="contactBlock">
+      <h2 class="contact-title">Porozmawiajmy.</h2>
+      <p class="contact-sub">Otwarty na nowe projekty i współpracę — napisz.</p>
+      <div class="contact-links">
+        <a href="mailto:jan@example.com" class="contact-link">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+          jan@example.com
+        </a>
+        <a href="https://github.com" target="_blank" class="contact-link">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 00-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0020 4.77 5.07 5.07 0 0019.91 1S18.73.65 16 2.48a13.38 13.38 0 00-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 005 4.77a5.44 5.44 0 00-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 009 18.13V22"/></svg>
+          GitHub
+        </a>
+        <a href="https://linkedin.com" target="_blank" class="contact-link">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6zM2 9h4v12H2z"/><circle cx="4" cy="4" r="2"/></svg>
+          LinkedIn
+        </a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <span>© 2026 Jan Kowalski</span>
+  <span>Dostępny do nowych projektów</span>
+</footer>
+
+<script>
+  // cursor glow
+  const glow = document.getElementById('glow');
+  document.addEventListener('mousemove', e => {
+    glow.style.left = e.clientX + 'px';
+    glow.style.top = e.clientY + 'px';
+  });
+
+  // nav scroll
+  const nav = document.getElementById('nav');
+  window.addEventListener('scroll', () => {
+    nav.classList.toggle('scrolled', window.scrollY > 40);
+  });
+
+  // scroll reveal
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry, i) => {
+      if (entry.isIntersecting) {
+        const el = entry.target;
+        if (el.classList.contains('skill-item')) {
+          const siblings = [...el.parentElement.children];
+          const idx = siblings.indexOf(el);
+          el.style.animationDelay = (idx * 60) + 'ms';
+        }
+        el.classList.add('visible');
+        observer.unobserve(el);
+      }
+    });
+  }, { threshold: 0.15 });
+
+  document.querySelectorAll('.skill-item, .project-item, .contact-block').forEach(el => {
+    observer.observe(el);
+  });
+</script>
+</body>
+</html>
