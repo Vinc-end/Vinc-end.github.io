@@ -5,6 +5,124 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Vincent Czechowski - Programist</title>
 <link rel="stylesheet" href="style.css">
+<style>
+    .dt-root {
+    position: relative;
+    display: inline-flex;
+    align-items: right;
+    justify-content: right;
+  }
+
+  .dt-trigger {
+    width: 128px;
+    height: 128px;
+    border-radius: 50%;
+    background: transparent;
+    border: 1px solid rgba(200,240,110,0.4);
+    color: var(--accent, #c8f06e);
+    font-family: var(--mono, monospace);
+    font-size: 16px;
+    letter-spacing: 1.5px;
+    cursor: pointer;
+    transition: all 0.25s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-transform: uppercase;
+    line-height: 1.3;
+    text-align: center;
+  }
+  .dt-trigger:hover {
+    background: rgba(200,240,110,0.08);
+    border-color: var(--accent, #c8f06e);
+    transform: scale(1.06);
+  }
+
+  .dt-tree {
+    position: absolute;
+    left: 100%;
+    top: 50%;
+    pointer-events: none;
+    z-index: 50;
+  }
+
+  .dt-node {
+    position: absolute;
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+    border: 1px solid rgba(255,255,255,0.15);
+    background: #111;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--mono, monospace);
+    font-size: 12px;
+    color: rgba(255,255,255,0.7);
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    pointer-events: none;
+    transition: border-color 0.2s, color 0.2s, background 0.2s;
+    transform: translate(-50%, -50%) scale(0.4);
+    opacity: 0;
+    text-align: center;
+    line-height: 1.3;
+    text-decoration: none;
+  }
+  .dt-node:hover {
+    border-color: var(--accent, #c8f06e);
+    color: var(--accent, #c8f06e);
+    background: rgba(200,240,110,0.07);
+  }
+
+  .dt-sub {
+    position: absolute;
+    width: 76px;
+    height: 76px;
+    border-radius: 50%;
+    border: 1px solid rgba(255,255,255,0.1);
+    background: #0e0e0e;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--mono, monospace);
+    font-size: 10px;
+    color: rgba(255,255,255,0.5);
+    letter-spacing: 0.3px;
+    cursor: pointer;
+    pointer-events: none;
+    text-decoration: none;
+    transform: translate(-50%, -50%) scale(0.3);
+    opacity: 0;
+    text-align: center;
+    line-height: 1.3;
+    transition: border-color 0.2s, color 0.2s, background 0.2s;
+  }
+  .dt-sub:hover {
+    border-color: rgba(200,240,110,0.5);
+    color: var(--accent, #c8f06e);
+    background: rgba(200,240,110,0.05);
+  }
+
+  .dt-line {
+    position: absolute;
+    transform-origin: 0 50%;
+    height: 1px;
+    background: rgba(255,255,255,0.12);
+    left: 50%;
+    top: 50%;
+    transform: translate(0, -50%) scaleX(0);
+    opacity: 0;
+    transition: none;
+  }
+
+  .dt-canvas {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    pointer-events: none;
+  }
+</style>
 </head>
 <body>
 <div class="cursor-glow" id="glow"></div>
@@ -22,30 +140,14 @@
   <div class="hero">
     <p class="hero-eyebrow">Full-Stack Developer</p>
     <h1 class="hero-title">Buduję rzeczy,<br><em>które działają.</em></h1>
-    <div class="hero-side">
-        <button class="btn btn-fill" id="hero-side-btn">Kliknij for fun</button>
-    </div>
- <div class="tree">
-  <ul>
-    <li>
-      <span class="node">Hover me</span>
-      <ul>
-        <li><span class="node">Child 1</span></li>
-        <li><span class="node">Child 2</span></li>
-      </ul>
-    </li>
-    <li>
-      <span class="node">Hover me</span>
-      <ul>
-        <li><span class="node">Child 3</span></li>
-        <li><span class="node">Child 4</span></li>
-      </ul>
-    </li>
-
-      
-  </ul>
- </div>
-
+  <!-- tree -->
+  <div class="dt-root" id="dtRoot">
+    <button class="dt-trigger" id="dtTrigger" aria-label="Otwórz menu">Work<br>↗</button>
+  <svg class="dt-canvas" id="dtCanvas" width="700" height="500"
+       style="position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);pointer-events:none;overflow:visible;">
+  </svg>
+  <div class="dt-tree" id="dtTree"></div>
+  </div>
     <p class="hero-desc">Tworzę szybkie, skalowalne aplikacje webowe — od architektury backendu po dopracowany interfejs użytkownika.</p>
     <div class="hero-btns">
       <a href="#projekty" class="btn btn-fill">Moje projekty ↓</a>
@@ -190,6 +292,210 @@
   document.querySelectorAll('.skill-item, .project-item, .contact-block').forEach(el => {
     observer.observe(el);
   });
+  (function() {
+  const root = document.getElementById('dtRoot');
+  const trigger = document.getElementById('dtTrigger');
+  const tree = document.getElementById('dtTree');
+  const canvas = document.getElementById('dtCanvas');
+
+  let open = false;
+  let activeNode = null;
+  let allNodes = [];
+  let allLines = [];
+  let animFrames = [];
+
+  const NODES = [
+    {
+      id: 'websites', label: 'Websites', angle: -50, dist: 160,
+      subs: [
+        { label: 'Portfolio', href: '#', angle: -100, dist: 140 },
+        { label: 'KPN\nGame', href: '#projekty', angle: -55, dist: 145 },
+        { label: 'Dashboard', href: '#projekty', angle: -10, dist: 140 },
+      ]
+    },
+    {
+      id: 'python', label: 'Python', angle: 50, dist: 160,
+      subs: [
+        { label: 'KPN\nGame', href: '#projekty', angle: 10, dist: 145 },
+        { label: 'API\nAuth', href: '#projekty', angle: 55, dist: 145 },
+        { label: 'Scripts', href: '#projekty', angle: 100, dist: 140 },
+      ]
+    },
+  ];
+
+  function degToRad(d) { return d * Math.PI / 180; }
+
+  function animateTo(el, props, delay, duration, easing) {
+    const start = performance.now() + delay;
+    function ease(t) {
+      if (easing === 'out') return 1 - Math.pow(1 - t, 3);
+      if (easing === 'in') return t * t * t;
+      return t < 0.5 ? 4*t*t*t : 1 - Math.pow(-2*t+2,3)/2;
+    }
+    function frame(now) {
+      if (now < start) { animFrames.push(requestAnimationFrame(frame)); return; }
+      const t = Math.min((now - start) / duration, 1);
+      const e = ease(t);
+      Object.entries(props).forEach(([k, [from, to]]) => {
+        el.style[k] = from + (to - from) * e + (k === 'opacity' ? '' : k.includes('scale') ? ')' : 'px');
+      });
+      if (t < 1) animFrames.push(requestAnimationFrame(frame));
+    }
+    animFrames.push(requestAnimationFrame(frame));
+  }
+
+  function setTransform(el, scale, opacity) {
+    const base = el.dataset.base || '';
+    el.style.transform = base + ` scale(${scale})`;
+    el.style.opacity = opacity;
+  }
+
+  function openTree() {
+    open = true;
+    trigger.style.transform = 'scale(1.1)';
+    trigger.style.borderColor = 'var(--accent, #c8f06e)';
+    trigger.style.background = 'rgba(200,240,110,0.1)';
+
+    NODES.forEach((nd, i) => {
+      const rad = degToRad(nd.angle);
+      const x = Math.cos(rad) * nd.dist;
+      const y = Math.sin(rad) * nd.dist;
+
+      const el = document.createElement('div');
+      el.className = 'dt-node';
+      el.textContent = nd.label;
+      el.dataset.id = nd.id;
+      el.dataset.base = `translate(calc(${x}px - 50%), calc(${y}px - 50%))`;
+      el.style.transform = el.dataset.base + ' scale(0.4)';
+      el.style.opacity = '0';
+      el.style.left = '0'; el.style.top = '0';
+      el.style.pointerEvents = 'auto';
+      tree.appendChild(el);
+      allNodes.push({ el, nd, x, y });
+
+      el.addEventListener('mouseenter', () => { if (open) showSubs(nd, x, y); });
+      el.addEventListener('mouseleave', () => { hideSubs(); });
+
+      const delay = 60 + i * 80;
+      setTimeout(() => {
+        el.style.transition = 'transform 0.4s cubic-bezier(0.34,1.56,0.64,1), opacity 0.3s ease';
+        el.style.transform = el.dataset.base + ' scale(1)';
+        el.style.opacity = '1';
+      }, delay);
+
+      drawLine(x, y, delay, nd.id + '_main');
+    });
+  }
+
+  function drawLine(x, y, delay, id) {
+    const len = Math.sqrt(x*x + y*y);
+    const angle = Math.atan2(y, x) * 180 / Math.PI;
+    const line = document.createElement('div');
+    line.className = 'dt-line';
+    line.dataset.id = id;
+    line.style.width = len + 'px';
+    line.style.transformOrigin = '0 50%';
+    line.style.transform = `translate(0, -50%) rotate(${angle}deg) scaleX(0)`;
+    line.style.opacity = '0';
+    tree.appendChild(line);
+    allLines.push(line);
+
+    setTimeout(() => {
+      line.style.transition = 'transform 0.35s ease, opacity 0.2s ease';
+      line.style.transform = `translate(0, -50%) rotate(${angle}deg) scaleX(1)`;
+      line.style.opacity = '1';
+    }, delay - 20);
+  }
+
+  function showSubs(nd, px, py) {
+    hideSubs();
+    activeNode = nd.id;
+
+    nd.subs.forEach((sub, i) => {
+      const rad = degToRad(sub.angle);
+      const sx = px + Math.cos(rad) * sub.dist;
+      const sy = py + Math.sin(rad) * sub.dist;
+
+      const el = document.createElement('a');
+      el.className = 'dt-sub';
+      el.href = sub.href || '#';
+      el.innerHTML = sub.label.replace('\n', '<br>');
+      el.dataset.parentId = nd.id;
+      el.dataset.base = `translate(calc(${sx}px - 50%), calc(${sy}px - 50%))`;
+      el.style.transform = el.dataset.base + ' scale(0.3)';
+      el.style.opacity = '0';
+      el.style.left = '0'; el.style.top = '0';
+      el.style.pointerEvents = 'auto';
+      tree.appendChild(el);
+      allNodes.push({ el, isSub: true });
+
+      const delay = i * 60;
+      setTimeout(() => {
+        el.style.transition = 'transform 0.35s cubic-bezier(0.34,1.56,0.64,1), opacity 0.25s ease, border-color 0.2s, color 0.2s, background 0.2s';
+        el.style.transform = el.dataset.base + ' scale(1)';
+        el.style.opacity = '1';
+      }, delay);
+
+      const len = Math.sqrt((sx-px)**2 + (sy-py)**2);
+      const angle = Math.atan2(sy-py, sx-px) * 180 / Math.PI;
+      const line = document.createElement('div');
+      line.className = 'dt-line';
+      line.dataset.parentId = nd.id;
+      line.style.cssText = `width:${len}px;transform:translate(${px}px, ${py}px) rotate(${angle}deg) scaleX(0);opacity:0;`;
+      tree.appendChild(line);
+      allLines.push(line);
+
+      setTimeout(() => {
+        line.style.transition = 'transform 0.3s ease, opacity 0.2s ease';
+        line.style.transform = `translate(${px}px, ${py}px) rotate(${angle}deg) scaleX(1)`;
+        line.style.opacity = '1';
+      }, delay - 20);
+    });
+  }
+
+  function hideSubs() {
+    activeNode = null;
+    const subs = tree.querySelectorAll('[data-parent-id]');
+    subs.forEach(el => {
+      el.style.transition = 'transform 0.2s ease, opacity 0.15s ease';
+      el.style.opacity = '0';
+      el.style.transform = (el.dataset.base || '') + ' scale(0.3)';
+      setTimeout(() => el.remove(), 220);
+    });
+  }
+
+  function closeTree() {
+    open = false;
+    activeNode = null;
+    trigger.style.transform = '';
+    trigger.style.borderColor = '';
+    trigger.style.background = '';
+
+    allNodes.forEach(({ el }) => {
+      el.style.transition = 'transform 0.25s ease, opacity 0.2s ease';
+      el.style.opacity = '0';
+      const base = el.dataset.base || '';
+      el.style.transform = base + ' scale(0.4)';
+      setTimeout(() => el.remove(), 260);
+    });
+    allLines.forEach(line => {
+      line.style.transition = 'opacity 0.2s ease';
+      line.style.opacity = '0';
+      setTimeout(() => line.remove(), 220);
+    });
+    allNodes = [];
+    allLines = [];
+  }
+
+  trigger.addEventListener('click', (e) => {
+    e.stopPropagation();
+    open ? closeTree() : openTree();
+  });
+
+  document.addEventListener('click', (e) => {
+    if (open && !root.contains(e.target)) closeTree();
+  });
+})();
 </script>
 </body>
 </html>
