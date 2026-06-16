@@ -11,6 +11,13 @@
     display: inline-flex;
     align-items: right;
     justify-content: right;
+    /* position: absolute;
+    top: 50%;
+    left: 90%;
+    transform: translateY(-50%);
+    display: flex;
+    align-items: center;
+    justify-content: center; */
   }
 
   .dt-trigger {
@@ -40,7 +47,7 @@
 
   .dt-tree {
     position: absolute;
-    left: 100%;
+    /* left: 100%; */
     top: 50%;
     pointer-events: none;
     z-index: 50;
@@ -142,7 +149,7 @@
     <h1 class="hero-title">Buduję rzeczy,<br><em>które działają.</em></h1>
   <!-- tree -->
   <div class="dt-root" id="dtRoot">
-    <button class="dt-trigger" id="dtTrigger" aria-label="Otwórz menu">Work<br>↗</button>
+    <button class="dt-trigger" id="dtTrigger" aria-label="Otwórz menu"> My<br> Links </button>
   <svg class="dt-canvas" id="dtCanvas" width="700" height="500"
        style="position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);pointer-events:none;overflow:visible;">
   </svg>
@@ -174,8 +181,6 @@
       <div class="skill-item">FastAPI</div>
       <div class="skill-item">AI</div>
       <div class="skill-item">Redis</div>
-      <div class="skill-item">Git</div>
-      <div class="skill-item">Git</div>
       <div class="skill-item">Git</div>
     </div>
   </section>
@@ -306,19 +311,26 @@
 
   const NODES = [
     {
+      id: "contact", label: 'Contact', angle: 220, dist: 200,
+      subs:[
+        { label: 'Email',  href: 'mailto:',                     angle: 220, dist:145},
+        { label: 'Github', href: 'https://github.com/Vinc-end', angle: -40, dist:145 }
+      ]
+    },
+    {
       id: 'websites', label: 'Websites', angle: -50, dist: 160,
       subs: [
         { label: 'Portfolio', href: '#', angle: -100, dist: 140 },
-        { label: 'KPN\nGame', href: '#projekty', angle: -55, dist: 145 },
-        { label: 'Dashboard', href: '#projekty', angle: -10, dist: 140 },
+        { label: 'Placeholder', href: '#projekty', angle: -55, dist: 145 },
+        { label: 'Placeholder', href: '#', angle: -10, dist: 140 },
       ]
     },
     {
       id: 'python', label: 'Python', angle: 50, dist: 160,
       subs: [
-        { label: 'KPN\nGame', href: '#projekty', angle: 10, dist: 145 },
-        { label: 'API\nAuth', href: '#projekty', angle: 55, dist: 145 },
-        { label: 'Scripts', href: '#projekty', angle: 100, dist: 140 },
+        { label: 'KPN\nGame', href: '#', angle: 10, dist: 145 },
+        { label: 'Placeholder', href: '#', angle: 55, dist: 145 },
+        { label: 'Placeholder', href: '#', angle: 100, dist: 140 },
       ]
     },
   ];
@@ -371,10 +383,9 @@
       el.style.left = '0'; el.style.top = '0';
       el.style.pointerEvents = 'auto';
       tree.appendChild(el);
-      allNodes.push({ el, nd, x, y });
-
+      allNodes.push({ el, nd, x, y });    
       el.addEventListener('mouseenter', () => { if (open) showSubs(nd, x, y); });
-      el.addEventListener('mouseleave', () => { hideSubs(); });
+      el.addEventListener('mouseleave', () => { setTimeout(() => hideSubs(), 3000); });
 
       const delay = 60 + i * 80;
       setTimeout(() => {
@@ -419,6 +430,8 @@
       const el = document.createElement('a');
       el.className = 'dt-sub';
       el.href = sub.href || '#';
+      el.target = "_blank";
+      el.rel = 'noopener noreferrer';
       el.innerHTML = sub.label.replace('\n', '<br>');
       el.dataset.parentId = nd.id;
       el.dataset.base = `translate(calc(${sx}px - 50%), calc(${sy}px - 50%))`;
@@ -460,7 +473,7 @@
       el.style.transition = 'transform 0.2s ease, opacity 0.15s ease';
       el.style.opacity = '0';
       el.style.transform = (el.dataset.base || '') + ' scale(0.3)';
-      setTimeout(() => el.remove(), 220);
+      setTimeout(() => el.remove(), 220); 
     });
   }
 
