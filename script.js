@@ -52,7 +52,7 @@ document.querySelectorAll('.skill-item, .project-item, .contact-block').forEach(
     {
       id: 'python', label: 'Python', angle: 50, dist: 160,
       subs: [
-        { label: 'KPN\nGame',   href: '#', angle: 10,  dist: 145 },
+        { label: 'Game',   href: '#', angle: 10,  dist: 145 },
         { label: 'Placeholder', href: '#', angle: 55,  dist: 145 },
         { label: 'Placeholder', href: '#', angle: 100, dist: 140 }
       ]
@@ -260,4 +260,107 @@ document.querySelectorAll('.skill-item, .project-item, .contact-block').forEach(
       wasCompact = c;
     }, 150);
   });
+})();
+// vvvvv particle constellation vvvvv
+(function () {
+  const canvas = document.getElementById('fx');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  const ACCENT = '200,240,110';
+  const LINK_DIST = 130;   // px — neighbour link range
+  const MOUSE_DIST = 190;  // px — cursor link / repel range
+
+  let w = 0, h = 0, dpr = 1, raf = 0;
+  let particles = [];
+  const mouse = { x: -9999, y: -9999 };
+
+  function seed() {
+    // particle count scales with viewport area, capped for perf
+    const count = Math.min(140, Math.max(36, Math.round((w * h) / 13000)));
+    particles = Array.from({ length: count }, () => ({
+      x: Math.random() * w,
+      y: Math.random() * h,
+      vx: (Math.random() - 0.5) * 0.35,
+      vy: (Math.random() - 0.5) * 0.35,
+      r: Math.random() * 1.6 + 0.8,
+      hot: Math.random() < 0.35 // a few accent-coloured dots
+    }));
+  }
+
+  function resize() {
+    dpr = Math.min(window.devicePixelRatio || 1, 2);
+    w = window.innerWidth;
+    h = window.innerHeight;
+    canvas.width = w * dpr;
+    canvas.height = h * dpr;
+    canvas.style.width = w + 'px';
+    canvas.style.height = h + 'px';
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    seed();
+  }
+
+  function draw() {
+    ctx.clearRect(0, 0, w, h);
+    for (let i = 0; i < particles.length; i++) {
+      const p = particles[i];
+      p.x += p.vx;
+      p.y += p.vy;
+      // wrap around edges
+      if (p.x < -10) p.x = w + 10; else if (p.x > w + 10) p.x = -10;
+      if (p.y < -10) p.y = h + 10; else if (p.y > h + 10) p.y = -10;
+
+      // cursor: link + gentle repel
+      const mdx = p.x - mouse.x, mdy = p.y - mouse.y;
+      const md = Math.hypot(mdx, mdy);
+      if (md < MOUSE_DIST) {
+        const t = 1 - md / MOUSE_DIST;
+        ctx.strokeStyle = `rgba(${ACCENT},${t * 0.55})`;
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(p.x, p.y);
+        ctx.lineTo(mouse.x, mouse.y);
+        ctx.stroke();
+        if (md > 0.1) {
+          const push = t * 0.7;
+          p.x += (mdx / md) * push;
+          p.y += (mdy / md) * push;
+        }
+      }
+
+      // neighbour links
+      for (let j = i + 1; j < particles.length; j++) {
+        const q = particles[j];
+        const dx = p.x - q.x, dy = p.y - q.y;
+        const d = Math.hypot(dx, dy);
+        if (d < LINK_DIST) {
+          ctx.strokeStyle = `rgba(255,255,255,${(1 - d / LINK_DIST) * 0.16})`;
+          ctx.lineWidth = 1;
+          ctx.beginPath();
+          ctx.moveTo(p.x, p.y);
+          ctx.lineTo(q.x, q.y);
+          ctx.stroke();
+        }
+      }
+
+      // the dot
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+      ctx.fillStyle = p.hot ? `rgba(${ACCENT},0.7)` : 'rgba(255,255,255,0.45)';
+      ctx.fill();
+    }
+    if (!reduce) raf = requestAnimationFrame(draw);
+  }
+
+  window.addEventListener('mousemove', e => { mouse.x = e.clientX; mouse.y = e.clientY; });
+  window.addEventListener('mouseout', () => { mouse.x = mouse.y = -9999; });
+  let rt = null;
+  window.addEventListener('resize', () => {
+    clearTimeout(rt);
+    rt = setTimeout(resize, 150);
+  });
+
+  resize();
+  draw(); //rendera single static frame, no loop
 })();

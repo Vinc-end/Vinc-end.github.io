@@ -26,6 +26,60 @@
     overflow-x: hidden;
   }
 
+  /* ── ambient background ── */
+  .bg-grid {
+    position: fixed;
+    inset: 0;
+    z-index: -2;
+    pointer-events: none;
+    background-image:
+      radial-gradient(circle, rgba(255,255,255,0.05) 1.2px, transparent 1.3px);
+    background-size: 34px 34px;
+    background-position: center;
+    -webkit-mask-image: radial-gradient(ellipse 75% 70% at 50% 38%, #000 35%, transparent 100%);
+            mask-image: radial-gradient(ellipse 75% 70% at 50% 38%, #000 35%, transparent 100%);
+  }
+
+  .bg-orbs {
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    overflow: hidden;
+  }
+  .orb {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(70px);
+    will-change: transform;
+  }
+  .orb-1 {
+    width: 480px; height: 480px;
+    top: -130px; left: -90px;
+    background: radial-gradient(circle, rgba(200,240,110,0.16), transparent 70%);
+    animation: drift1 26s ease-in-out infinite;
+  }
+  .orb-2 {
+    width: 400px; height: 400px;
+    bottom: -120px; right: -70px;
+    background: radial-gradient(circle, rgba(120,170,235,0.12), transparent 70%);
+    animation: drift2 32s ease-in-out infinite;
+  }
+  .orb-3 {
+    width: 320px; height: 320px;
+    top: 48%; left: 58%;
+    background: radial-gradient(circle, rgba(200,240,110,0.09), transparent 70%);
+    animation: drift3 38s ease-in-out infinite;
+  }
+
+  /* particle constellation canvas */
+  .bg-fx {
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+  }
+
   /* ── cursor glow ── */
   .cursor-glow {
     pointer-events: none;
@@ -400,6 +454,18 @@
     0% { left: -100%; }
     50% { left: 100%; }
     100% { left: 100%; }
+  }
+  @keyframes drift1 {
+    0%, 100% { transform: translate(0, 0); }
+    50%      { transform: translate(70px, 50px); }
+  }
+  @keyframes drift2 {
+    0%, 100% { transform: translate(0, 0); }
+    50%      { transform: translate(-60px, -45px); }
+  }
+  @keyframes drift3 {
+    0%, 100% { transform: translate(0, 0) scale(1); }
+    50%      { transform: translate(40px, -55px) scale(1.12); }
   }
 
   /* ── reduced motion ── */
